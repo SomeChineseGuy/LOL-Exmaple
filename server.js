@@ -6,6 +6,7 @@ const env = require('dotenv').config({
 const port = process.env.PORT;
 const app = express();
 const axios = require('axios');
+const { get } = require('express/lib/response');
 app.use(morgan('dev'));
 
 const apiKey = process.env.API_KEY
@@ -36,10 +37,19 @@ const getListOfMatches = async (id) => {
   return matches
 }
 
-const getSingleMatch = async (matchId) => {
+const getSingleMatch = async (matchId, puuid, matchNum) => {
+  const frontObj = {};
   let single = await axios.get(`https://americas.api.riotgames.com/lol/match/v5/matches/${matchId}?api_key=${apiKey}`)
   .then(data => {
-    return data.data
+    let numOfPosition = null
+    for(let i = 0; i < data.data.metadata.participants.length; i++) {
+      if(puuid === data.data.metadata.participants[i]) {
+         numOfPosition = i
+      }
+    }
+    console.log(data.data.info.participants[numOfPosition])
+    console.log(numOfPosition)
+    
   })
   .catch(err => {
     return err
@@ -48,10 +58,11 @@ const getSingleMatch = async (matchId) => {
   return single;
 }
 
+
 const testAPI = async () => {
   const summonerPuuid = await getSummonerPuuid();
   const matchList = await getListOfMatches(summonerPuuid)
-  const singleMatch = await getSingleMatch(matchList[0])
+  const singleMatch = await getSingleMatch(matchList[0], summonerPuuid)
   console.log(singleMatch)
 }
 
