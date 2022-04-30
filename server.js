@@ -51,18 +51,21 @@ const getSingleMatch = async (matchId, puuid, matchNum) => {
     const info = data.data;
 
     const teamid = singleInfo.teamId;
-    let teamKills = null
+    let teamKills = teamid === info.info.teams[0].teamId ? info.info.teams[0].objectives.champion.kills : info.info.teams[1].objectives.champion.kills
 
-    for(let team of info.info.teams) {
-      // console.log(team)
-      if(team.teamId === teamid) {
-        teamKills = team.objectives.champion.kills;
-      }
-    }
+    // console.log(info.info.teams)
+    // console.log(teamKills)
 
-    console.log(teamKills)
+    // for(let team of info.info.teams) {
+    //   // console.log(team)
+    //   if(team.teamId === teamid) {
+    //     teamKills = team.objectives.champion.kills;
+    //   }
+    // }
 
-    let fontObj = {
+    
+
+    let frontObj = {
       name: singleInfo.championName,
       gameEnd: info.info.gameEndTimestamp,
       gameDuration: info.info.gameDuration,
@@ -94,7 +97,9 @@ const getSingleMatch = async (matchId, puuid, matchNum) => {
     // console.log(info.info.teams[0]);
     // console.log(singleInfo)
 
-    console.log(fontObj)
+    // console.log(fontObj)
+
+    return frontObj;
     
   })
   .catch(err => {
@@ -110,13 +115,15 @@ const testAPI = async () => {
   const matchList = await getListOfMatches(summonerPuuid)
   const singleMatch = await getSingleMatch(matchList[0], summonerPuuid)
   // console.log(singleMatch)
+  return singleMatch;
 }
 
-testAPI();
 
 
-app.get('/', (req, res) => {
-  res.send("<h1>Hello</h1>")
+app.get('/', async (req, res) => {
+  const results = await testAPI();
+  console.log(results)
+  res.send(results)
 })
 
 app.listen(port, () => {
