@@ -36,10 +36,23 @@ const getListOfMatches = async (id) => {
   return matches
 }
 
+const getSingleMatch = async (matchId) => {
+  let single = await axios.get(`https://americas.api.riotgames.com/lol/match/v5/matches/${matchId}?api_key=${apiKey}`)
+  .then(data => {
+    return data.data
+  })
+  .catch(err => {
+    return err
+  })
+
+  return single;
+}
+
 const testAPI = async () => {
   const summonerPuuid = await getSummonerPuuid();
   const matchList = await getListOfMatches(summonerPuuid)
-  console.log(matchList)
+  const singleMatch = await getSingleMatch(matchList[0])
+  console.log(singleMatch)
 }
 
 testAPI();
