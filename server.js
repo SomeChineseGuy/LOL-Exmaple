@@ -11,7 +11,7 @@ app.use(morgan('dev'));
 
 const apiKey = process.env.API_KEY
 
-const getSummonerPuuid = async (name = "doublelift") => {
+const getSummonerPuuid = async (name) => {
   let summoner = await axios.get(`https://na1.api.riotgames.com/lol/summoner/v4/summoners/by-name/${name}?api_key=${apiKey}`)
   .then(data => {
     console.log(data.data.puuid)
@@ -110,8 +110,8 @@ const getSingleMatch = async (matchId, puuid, matchNum) => {
 }
 
 
-const testAPI = async () => {
-  const summonerPuuid = await getSummonerPuuid();
+const getResults = async (summonerName = "Doublelift") => {
+  const summonerPuuid = await getSummonerPuuid(summonerName);
   const matchList = await getListOfMatches(summonerPuuid)
   const singleMatch = await getSingleMatch(matchList[0], summonerPuuid)
   // console.log(singleMatch)
@@ -121,7 +121,7 @@ const testAPI = async () => {
 
 
 app.get('/', async (req, res) => {
-  const results = await testAPI();
+  const results = await getResults();
   console.log(results)
   res.send(results)
 })
