@@ -34,7 +34,7 @@ const getListOfMatches = async (id) => {
     return err
   })
 
-  return matches
+  return matches;
 }
 
 const getSingleMatch = async (matchId, puuid, matchNum) => {
@@ -49,6 +49,18 @@ const getSingleMatch = async (matchId, puuid, matchNum) => {
     }
     const singleInfo = data.data.info.participants[numOfPosition]
     const info = data.data;
+
+    const teamid = singleInfo.teamId;
+    let teamKills = null
+
+    for(let team of info.info.teams) {
+      // console.log(team)
+      if(team.teamId === teamid) {
+        teamKills = team.objectives.champion.kills;
+      }
+    }
+
+    console.log(teamKills)
 
     let fontObj = {
       name: singleInfo.championName,
@@ -74,12 +86,13 @@ const getSingleMatch = async (matchId, puuid, matchNum) => {
         item5: singleInfo.item5,
         item6: singleInfo.item6,
       },
+      cs: singleInfo.totalMinionsKilled + singleInfo.neutralMinionsKilled, 
       wards: singleInfo.visionWardsBoughtInGame,
-      // pKill: (singleInfo.kills + singleInfo.assists) / 
+      pKill: `${Math.round((singleInfo.kills + singleInfo.assists) / teamKills * 100)}%`
     }
 
     // console.log(info.info.teams[0]);
-    console.log(singleInfo)
+    // console.log(singleInfo)
 
     console.log(fontObj)
     
