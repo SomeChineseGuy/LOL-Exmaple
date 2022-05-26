@@ -3,13 +3,37 @@ const morgan = require('morgan');
 const env = require('dotenv').config({
   path: __dirname + '/.env'
 })
-const port = process.env.PORT;
+const port = process.env.PORT || 9001;
 const app = express();
 const axios = require('axios');
 const { get } = require('express/lib/response');
 app.use(morgan('dev'));
 
+app.set('view engine', 'ejs');
+
+
+app.use(express.static("public"));
+
 const apiKey = process.env.API_KEY
+
+const summerObj = {
+  21: "Barrier",
+  1: "Cleanse",
+  14: "Ignite",
+  3: "Exhaust",
+  4: "Flash",
+  6: "Ghost",
+  7: "Heal",
+  13: "Clarity",
+  30: "To the King!",
+  31: "Poro Toss",
+  11: "Smite",
+  39: "Mark",
+  32: "Mark",
+  12: "Teleport",
+  54: "Placeholder",
+  55: "Placeholder and Attack-Smite",
+}
 
 const getSummonerPuuid = async (name) => {
   let summoner = await axios.get(`https://na1.api.riotgames.com/lol/summoner/v4/summoners/by-name/${name}?api_key=${apiKey}`)
@@ -38,7 +62,7 @@ const getListOfMatches = async (id) => {
 }
 
 const getSingleMatch = async (matchId, puuid, matchNum) => {
-  
+  console.log("--1-----------",matchId)
   let single = await axios.get(`https://americas.api.riotgames.com/lol/match/v5/matches/${matchId}?api_key=${apiKey}`)
   .then(data => {
     let numOfPosition = null
@@ -63,7 +87,7 @@ const getSingleMatch = async (matchId, puuid, matchNum) => {
     //   }
     // }
 
-    
+    console.log(singleInfo)
 
     let frontObj = {
       name: singleInfo.championName,
@@ -77,18 +101,18 @@ const getSingleMatch = async (matchId, puuid, matchNum) => {
         ratio: `${Math.round((singleInfo.kills + singleInfo.assists)/singleInfo.deaths * 100) / 100}: 1 KDA`
       },
       summonerSpells: {
-        summon1: singleInfo.summoner1Id,
-        summon2: singleInfo.summoner2Id
+        summon1: summerObj[singleInfo.summoner1Id],
+        summon2: summerObj[singleInfo.summoner2Id]
       },
-      items: {
-        item0: singleInfo.item0,
-        item1: singleInfo.item1,
-        item2: singleInfo.item2,
-        item3: singleInfo.item3,
-        item4: singleInfo.item4,
-        item5: singleInfo.item5,
-        item6: singleInfo.item6,
-      },
+      items: [
+         singleInfo.item0,
+         singleInfo.item1,
+         singleInfo.item2,
+         singleInfo.item3,
+         singleInfo.item4,
+         singleInfo.item5,
+         singleInfo.item6,
+      ],
       cs: singleInfo.totalMinionsKilled + singleInfo.neutralMinionsKilled, 
       wards: singleInfo.visionWardsBoughtInGame,
       pKill: `${Math.round((singleInfo.kills + singleInfo.assists) / teamKills * 100)}%`
@@ -120,10 +144,16 @@ const getResults = async (summonerName = "Doublelift") => {
 
 
 
-app.get('/', async (req, res) => {
-  const results = await getResults();
+
+app.get('/api/:summoner', async (req, res) => {
+  const search = req.params.summoner
+  const results = await getResults(search);
   console.log(results)
   res.send(results)
+})
+
+app.get('/',  (req, res) => {
+  res.render("check")
 })
 
 app.listen(port, () => {

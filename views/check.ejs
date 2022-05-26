@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/timeago.js/2.0.2/timeago.min.js" integrity="sha512-sl01o/gVwybF1FNzqO4NDRDNPJDupfN0o2+tMm4K2/nr35FjGlxlvXZ6kK6faa9zhXbnfLIXioHnExuwJdlTMA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <!-- <script src="//unpkg.com/timeago.js"></script> -->
+  <link rel="stylesheet" href="main.css">
+  
+</head>
+<body>
+  <h1>Search for your summoner</h1>
+  <form action="/api" class="search-form">
+    <label for="summoner">Summoner name</label>
+    <input type="text" name="summoner" class="summoner">
+    <button>Search</button>
+  </form>
+
+  <div class="results"></div>
+  
+  <script
+  src="https://code.jquery.com/jquery-3.6.0.min.js"
+  integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+  crossorigin="anonymous"></script>
+
+
+  <script type="text/javascript"  src="scripts/app.js"></script>
+</body> 
+</html>
